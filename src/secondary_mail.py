@@ -59,8 +59,9 @@ def find_sub_page_links(page):
         result.append(p.group(1))
     return(result)
 
+
 def find_email(page, email, memory=None):
-    result = re.compile(r'[\w\.]+@[\w\.]+').findall(page)
+    result = re.compile(r'[\w\.]+@[\w]+\.[\w]+').findall(page)
     if (len(result) != 0):
         print(result)
         return(result)
@@ -68,7 +69,6 @@ def find_email(page, email, memory=None):
         return(result)
     sub_targets = find_sub_page_links(page)
     if (len(sub_targets) != 0):
-        print("try again with page:", page)
         memory = sub_targets[0]
         sub_result = []
         for s in sub_targets:
@@ -77,6 +77,10 @@ def find_email(page, email, memory=None):
                 sub_result = find_email(sub_page, email, memory)
         if (len(sub_result)!=0):
             return(sub_result)
+    if (len(result)==0):
+        result = 'NULL'
+    return(result)
+
 
 def process_targets(targets):
     for t in targets:
@@ -87,9 +91,8 @@ def process_targets(targets):
             bbb_email = None
         if (page):
             email = find_email(page, bbb_email)
-        print("website %s, email %s, bbbemail %s" % (t['website'],email, bbb_email))
-
-
+        entry = {'website': t['website'], 'email': bbb_email, 'host_email': email}
+        print(entry)
 
 
 def main():
