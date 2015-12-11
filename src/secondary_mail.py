@@ -15,8 +15,6 @@ def get_targets():
     path = '../data/output/fetch_emails.json'
     files = glob.glob(path)
     targetList = []
-    resultlist = []
-    resultJSON = {}
     for name in files:
         try:
             with open(name) as json_file:
