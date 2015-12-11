@@ -47,21 +47,49 @@ def get_page(url):
     return(page)
 
 
-def find_email(page, email):
+def find_sub_page_links(page):
+    result = []
+    p = re.compile(r'<a href="(http(s)?:\/\/[\w\/_\.]+)">[\w\s]*about[\w\s]*<\/a>', flags=re.IGNORECASE).search(page)
+    if (p is None):
+        p = []
+    if (p):
+        result.append(p.group(1))
+    p = re.compile(r'<a href="(http(s)?:\/\/[\w\/_\.]+)">[\w\s]*contact[\w\s]*<\/a>', flags=re.IGNORECASE).search(page)
+    if (p is None):
+        p = []
+    if (p):
+        result.append(p.group(1))
+    return(result)
+
+def find_email(page, email, memory=None):
     result = re.compile(r'[\w\.]+@[\w\.]+').findall(page)
-    sub_targets = re.compile(r'<a href="([\w\.]+)">[\w\s]+about[\w\s]+</a>', flags=re.IGNORECASE).findall(page)
-    print(sub_targets)
+    if (len(result) != 0):
+        print(result)
+        return(result)
+    if (memory):
+        return(result)
+    sub_targets = find_sub_page_links(page)
+    if (len(sub_targets) != 0):
+        print("try again with page:", page)
+        memory = sub_targets[0]
+        sub_result = []
+        for s in sub_targets:
+            sub_page = get_page(s)
+            if (sub_page):
+                sub_result = find_email(sub_page, email, memory)
+        if (len(sub_result)!=0):
+            return(sub_result)
 
 def process_targets(targets):
     for t in targets:
-        print(t['website'])
         page = get_page(t['website'])
         if (t['email']):
-            email = t['email']
+            bbb_email = t['email']
         else:
-            email = None
-        if (page is not None):
-            email = find_email(page, email)
+            bbb_email = None
+        if (page):
+            email = find_email(page, bbb_email)
+        print("website %s, email %s, bbbemail %s" % (t['website'],email, bbb_email))
 
 
 
@@ -69,6 +97,8 @@ def process_targets(targets):
 def main():
     targets = get_targets()
     process_targets(targets)
+    #process_targets([{'website': 'http://www.petersonmoving.com', 'email': 'NULL'}])
+    print("\n\n\n\n************************************\n\n\njob is finished")
 
 if __name__ == '__main__':
     main()
