@@ -10,6 +10,28 @@ def extract_array(data):
     for k,v in data.iteritems():  # TODO should only grab v. will break on multi k,v
         return(v)
 
+def write_results(data):
+    path = '../data/output/results_r2.json'
+    try:
+        with open(path, 'w') as json_file:
+            r = json.dump(data, json_file)
+    except IOError as exc:
+        if exc.errno != errno.EISDIR:
+            raise
+
+
+def get_bbb_json():
+    path = '../data/output/results.json'
+    files = glob.glob(path)
+    for name in files:
+        try:
+            with open(name) as json_file:
+                bbbJSON = json.load(json_file)
+                # bbbList = extract_array(bbbJSON)
+        except IOError as exc:
+            if exc.errno != errno.EISDIR:
+                raise  # Propagate other kinds of IOError.
+    return(bbbJSON)
 
 def get_targets():
     path = '../data/output/fetch_emails.json'
@@ -84,11 +106,12 @@ def find_email(page, email, memory=None):
 def process_targets(targets):
     """
     :param targets: JSON type array with form [{'website':'http://my.com','email':'me@com'},...]
-    :return:
-    iterates through all targets to fetch t's page, find email in page.
+    :return: JSON type array [{'website':'http://my.com','email':'me@com','host_email':'better@com'},...]
+    iterates through all targets to fetch t's page, find email in company page.
     Makes email list unique and all lowercase. Rolls up results in a similar
     JSON type array but with extra element of new email, possibly different to BBB email coming in.
     """
+    result_entries = []
     for t in targets:
         page = get_page(t['website'])
         if (t['email']):
@@ -102,11 +125,45 @@ def process_targets(targets):
             email = list(set(email))
         entry = {'website': t['website'], 'email': bbb_email, 'host_email': email}
         print(entry)
+        result_entries.append(entry)
+    return(result_entries)
+
+
+def munge_results(emails, bbb_data):
+    result = []
+    # result = [e.update(i) for e in bbb_data if e.has_key('website') for i in emails if e['website'] == i['website']]
+    # print(result)
+    for e in bbb_data:
+        if (e.has_key('website')):
+            for i in emails:
+                if (e['website'] == i['website']):
+                    e.update(i)
+                    result.append(e)
+                    break
+        else:
+            result.append(e)
+    return(result)
+
+def summarize_run(data):
+    totals = {'records': 0, 'bbb': 0, 'host':0}
+    for e in data:
+        totals['records'] += 1
+        if (e.has_key('email') and e['email'] != 'NULL'):
+            totals['bbb'] += 1
+        if (e.has_key('host_email') and e['host_email'] != 'NULL'):
+            totals['host'] += 1
+    print("\n\n\n %d records with %d BBB emails and %d host emails found" % (totals['records'], totals['bbb'], totals['host']))
+    print("\n Efficienies: %f BBB | %f host | %f None" % ((float(totals['bbb'])/float(totals['records'])), (float(totals['host'])/float(totals['records'])), (float(totals['records'] - totals['bbb'] - totals['host'])/float(totals['records']))))
 
 
 def main():
     targets = get_targets()
-    process_targets(targets)
+    new_emails = process_targets(targets)
+    big_json = get_bbb_json()
+    new_array = munge_results(new_emails, big_json)
+    write_results(new_array)
+    summarize_run(new_array)
+
     #process_targets([{'website': 'http://www.petersonmoving.com', 'email': 'NULL'}])
     print("\n\n\n\n************************************\n\n\njob is finished")
 
