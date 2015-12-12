@@ -63,7 +63,6 @@ def find_sub_page_links(page):
 def find_email(page, email, memory=None):
     result = re.compile(r'[\w\.]+@[\w]+\.[\w]+').findall(page)
     if (len(result) != 0):
-        print(result)
         return(result)
     if (memory):
         return(result)
@@ -91,6 +90,8 @@ def process_targets(targets):
             bbb_email = None
         if (page):
             email = find_email(page, bbb_email)
+        if (isinstance(email, list)):
+            email = list(set(email))
         entry = {'website': t['website'], 'email': bbb_email, 'host_email': email}
         print(entry)
 
