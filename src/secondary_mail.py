@@ -82,6 +82,13 @@ def find_email(page, email, memory=None):
 
 
 def process_targets(targets):
+    """
+    :param targets: JSON type array with form [{'website':'http://my.com','email':'me@com'},...]
+    :return:
+    iterates through all targets to fetch t's page, find email in page.
+    Makes email list unique and all lowercase. Rolls up results in a similar
+    JSON type array but with extra element of new email, possibly different to BBB email coming in.
+    """
     for t in targets:
         page = get_page(t['website'])
         if (t['email']):
@@ -91,6 +98,7 @@ def process_targets(targets):
         if (page):
             email = find_email(page, bbb_email)
         if (isinstance(email, list)):
+            email = [e.lower() for e in email]
             email = list(set(email))
         entry = {'website': t['website'], 'email': bbb_email, 'host_email': email}
         print(entry)
