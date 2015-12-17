@@ -11,7 +11,7 @@ def extract_array(data):
         return(v)
 
 def write_results(data):
-    path = '../data/output/results_r2.json'
+    path = '../data/output/results_r3.json'
     try:
         with open(path, 'w') as json_file:
             r = json.dump(data, json_file)
@@ -21,7 +21,7 @@ def write_results(data):
 
 
 def get_bbb_json():
-    path = '../data/output/results.json'
+    path = '../data/output/results-2.json'
     files = glob.glob(path)
     for name in files:
         try:
@@ -34,7 +34,7 @@ def get_bbb_json():
     return(bbbJSON)
 
 def get_targets():
-    path = '../data/output/fetch_emails.json'
+    path = '../data/output/fetch_emails-2.json'
     files = glob.glob(path)
     targetList = []
     for name in files:
