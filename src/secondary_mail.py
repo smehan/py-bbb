@@ -1,3 +1,10 @@
+"""
+This class will take an existing list of sites encoded as a json object.
+It will fetch those sites and find any emails on the target page or either
+[about, contact] page and search those for email as well. It remembers what it's seen
+from the source page to the target page to prevent tight loops. It returns the results
+in a single json array.
+"""
 import urllib2
 import httplib
 import re
