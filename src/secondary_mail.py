@@ -160,7 +160,7 @@ def summarize_run(data):
         if (e.has_key('host_email') and e['host_email'] != 'NULL'):
             totals['host'] += 1
     print("\n\n\n %d records with %d BBB emails and %d host emails found" % (totals['records'], totals['bbb'], totals['host']))
-    print("\n Efficienies: %f BBB | %f host | %f None" % ((float(totals['bbb'])/float(totals['records'])), (float(totals['host'])/float(totals['records'])), (float(totals['records'] - totals['bbb'] - totals['host'])/float(totals['records']))))
+    print("\n Efficiencies: %f BBB | %f host | %f None" % ((float(totals['bbb'])/float(totals['records'])), (float(totals['host'])/float(totals['records'])), (float(totals['records'] - totals['bbb'] - totals['host'])/float(totals['records']))))
 
 
 def main():
