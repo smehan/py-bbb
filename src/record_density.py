@@ -162,6 +162,7 @@ def main():
                 last_record = next_record
             row_count += 1
         print("%d rows processed, %d have no websites, %d have emails" % (row_count, no_www, email_count))
+        print("\n\n\n\n************************************\n\n\njob is finished")
 
 
 if __name__ == '__main__':
