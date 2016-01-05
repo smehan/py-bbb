@@ -1,1 +1,6 @@
-{"name":"value"}
+{"people":[
+  {"name":"Fred"},
+  {"name":"Barney"},
+  {"name":"Wilma"},
+  {"name":"John"}
+]}
