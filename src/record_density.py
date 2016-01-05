@@ -9,7 +9,6 @@ import sys
 import re
 
 
-
 def getDict(row):
     out_row = {}
     out_row['website'] = row[0]
@@ -88,23 +87,23 @@ def mergeRows(last, next):
         if last[k] != next[k]:
             if k == 'bbb_url':
                 out[k] = correctBBB(last[k], next[k])
-            if k == 'email':
+            elif k == 'email':
                 if last[k] == 'NULL' and last['external_email'] != '':
                     last[k] = last['external_email']
                 out[k] = correctEmail(last[k], next[k])
-            if k == 'external_email':
+            elif k == 'external_email':
                 if last[k] == 'NULL' and last['external_email'] != '':
                     last[k] = last['external_email']
                 out[k] = correctEmail(last[k], next[k])
-            if k == 'external_email_b':
+            elif k == 'external_email_b':
                 if last[k] == 'NULL' and last['external_email_b'] != '':
                     last[k] = last['external_email_b']
                 out[k] = correctEmail(last[k], next[k])
-            if k == 'name':
+            elif k == 'name':
                 out[k] = correctName(last[k], next[k])
-            if k == 'type':
+            elif k == 'type':
                 out[k] = correctNumIs(last[k], next[k])
-            if k == 'category':
+            elif k == 'category':
                 out[k] = correctNumIs(last[k], next[k])
             #print(k,out[k],last[k],next[k])
     return(out)
@@ -157,7 +156,6 @@ def main():
                 no_www += 1
                 next_record = getDict(row)
                 email_count = countEmails(last_record, email_count)
-                print(last_record['email'], last_record['external_email'], last_record['external_email_b'])
                 writeRecord(last_record)
                 last_record = next_record
             row_count += 1
